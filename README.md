@@ -1,0 +1,2 @@
+# Tournament_game-english_version
+The Tournament_game simulates a tournament between different fighters, with the ability to choose fighters from different lists, create your own characters, bet on the outcome of fights or a tournament. The duel of each two fighters is based on the original combat model with a normal (Gaussian) probability distribution. The user interface provides easy localization into other languages.
