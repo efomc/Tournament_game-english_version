@@ -1,32 +1,32 @@
-##Tournament_game, ver 1.0.eng
+# Tournament_game, ver 1.0.eng
 
 
-###authors: Egor Fomin in association with beresk_let
+### authors: Egor Fomin in association with beresk_let
 
 The Tournament_game simulates a tournament between different fighters, with the ability to choose fighters from different lists, create your own characters, bet on the outcome of the fights or the tournament.
 
-#Bets
+# Bets
 
 The main gameplay consists of bets. After creating (or generating a random) set of fighters, the user can place a bet on the winner of the tournament (the bet multiplier in case of MULTIPLIC_BET_TOURN_WINNER win depends on the number of participants), as well as place bets on the winner in each battle at all stages of the tournament.
 If the user loses all cash, he is no longer asked for bets and is only consistently informed of the results of all the tournament's fights, up to the winner.
 
-##Increasing difficulty:
+## Increasing difficulty:
 
 The more cash the user has, the more difficult it is to place bets - the user receives less and less information about the fighters before the bet.
 At the highest values of the player's money-box, information about fighters is not only reduced, but may also be unreliable (the percentage of unreliability is set by the UNRELIABLE_LIMIT constant). The intervals for changing the volume and reliability of the information supplied are specified in the CASH_STAGE_VALUES constant and are limited to 6 steps.
 
-##Leaderboard
+## Leaderboard
 
 If the user increases the money-box more than the owner of the smallest record, he himself can get into the high score table and rise in it, from tournament to tournament, in order to eventually take first place.
 
-#Selection and generation of tournament fighters:
+# Selection and generation of tournament fighters:
 
 When forming the list of tournament fighters, the user can set his own name for one, several or all fighters and one parameter for each (or not set parameters).
 Also, the user can use ready-made sets of characters:
 The user selects one or more of the ready-made sets, and the program randomly selects fighters from it for the tournament.
 The user can create any number of his own fighters and choose from which sets the remaining ones will be recruited. The user can also not create their own fighters at all and use only ready-made kits.
 
-##Formation of the list of fighters:
+## Formation of the list of fighters:
 
 1. the user sets the total number of fighters from the given number of options (MULTIPLIC_BET_TOURN_WINNER),
 
@@ -36,7 +36,7 @@ The user can create any number of his own fighters and choose from which sets th
 
 At the output, we get a list from the character creation set: Name (name), given parameter (parameter_type), value category for the given parameter (parameter_base).
 
-#Fight model (function fight_model):
+# Fight model (function fight_model):
 
 To ensure the maximum speed of combat calculations, a simple and elegant model for calculating the results of fighters' strikes is the basis.
 The model sequentially calculates the rounds (the strike_model function) in which both fighters can strike, and then handles its consequences for the fighters.
@@ -45,7 +45,7 @@ The only parameter responsible for the probability of hitting is ‘duelling’.
 The ‘might’ parameter is responsible for the force of striking, 
 and the ‘armor’ parameter is responsible for the number of hits that the character can withstand.
 
-##Striking
+## Striking
 
 For each round, a single random number is generated (the result of the roll is ‘dice’) and mapped to each fighter's single parameter, dueling (the hit_model function).
 
@@ -81,7 +81,7 @@ miss:
 
 For ease of model management, the maximum value of the throw result and the duelling parameter are set to integers from 0 to 100 (the value of DICE_FIGHT_LIMIT, constants.py file), which allows it to be thought of as a "percentage".
 
-##Normal distribution
+## Normal distribution
 
 For greater realism, the throw result is modeled with a normal (Gaussian) distribution (gauss_dice function). The mathematical expectation is 50 (half of DICE_FIGHT_LIMIT). Therefore, in the maximum number of cases, the value of the roll will be about 50. By analyzing a large number of samples, the variance is chosen in such a way that the distribution is fairly smooth:
 
@@ -98,7 +98,7 @@ thus, low and high values still drop less frequently, which still leaves fighter
 
 Throw values less than 0 and greater than the maximum value (in this case DICE_FIGHT_LIMIT) are cut off.
 
-##Striking force
+## Striking force
 
 The force of hitting (function hit_strength_model) is modeled by a simple random number from 0 to the value of the fighter's strength (parameter might). For realism, i.e. to reproduce the situation that a person with a certain skill, as a rule, implements it, and does not miss or give an extraordinary result with equal probability, the impact force is also modeled by the same normal distribution (gauss_dice function) with the same scatter of results, only from half the size of might:
 
@@ -115,20 +115,20 @@ Thus, in the vast majority of cases, the magnitude of the impact will be half th
 
 If you wish, you can enter your own model for calculating the force of impact. For example, to introduce the influence of fatigue or the consequences of injuries, etc. If the result can be reduced to a single value "strength of impact", then only the hit_strength_model function will need to be changed, adding the appropriate attributes to the Character class, an instance of which is passed to the hit_strength_model function.
 
-##Damage dealt (damage_model function)
+## Damage dealt (damage_model function)
 
 In this release, the amount of damage is taken equal to the force of the hit.
 If you wish, you can enter your own damage model. For example, introduce weapons for fighters with different parameters and defeat properties. If the result can be reduced to a single amount of damage (damage), then only the damage_model function needs to be changed.
 
-##Armor crush (armor_crush_model function)
+## Armor crush (armor_crush_model function)
 
 In this release, the amount of damage to armor is taken equal to the amount of damage (damage). The damage is simply subtracted from the current value of the armor value (armor_curr), which is equal to the “armor” parameter at the beginning of the battle and decreases with each missed hit.
 
 You can optionally enter your own damage model. For example, enter different types of armor or a random value that affects the chance to reduce damage. If the result can be reduced to a single value of the armor value (armor), then only the armor_crush_model function will need to be changed.
 
-#Balance (calibration)
+# Balance (calibration)
 
-##Creation of parameters of fighters:
+## Creation of parameters of fighters:
 
 To ensure a balance between fighters, only one of the parameters can have a ‘high’ score, one ‘normal’ and one ‘low’.
 
@@ -138,7 +138,7 @@ To create a character, you can specify at most one parameter in the form - param
 
 If no parameters are given, the entire distribution is given randomly. Since different parameters affect the results of the battle in different ways, different corrections are used for the magnitude categories for different types of parameters (PARAMETERS_DELTAS).
 
-##Calibration of parameter values:
+## Calibration of parameter values:
 
 To calibrate the game so that the outcome of combat is less predictable and characters with low ‘duelling’ but high ‘might’ or ‘armor’ can also win in a significant number of cases, the maximum value of ‘duelling’ is capped at 81.
 
@@ -152,13 +152,13 @@ CATEGORIES_LIMITS - categories of magnitude
 
 PARAMETERS_DELTAS - corrections for magnitude categories
 
-##Result balance:
+## Result balance:
 
 In the current release, a high ‘duelling’ parameter plays a decisive role in the victory of the character. If a fighter's ‘duelling’ parameter belongs to the high interval and is close to the maximum value, he will win with the maximum probability.
 
 You can amend the model at your discretion (PARAMETERS_DELTAS constant)
 
-#User interaction. Envisaged input errors
+# User interaction. Envisaged input errors
 
 It is possible for the user to enter various answers to the program's questions (tuples ANSWER_OPTIONS_YES_NO_RUS_ENG, ENG_FIRST_FIGHTER_OPTIONS, ENG_SECOND_FIGHTER_OPTIONS), including entering characters in different registers. For example, for a request to enter "yes" or "no", the user can enter options for short or long answers, including those with an erroneous layout, from a tuple:
 
@@ -189,9 +189,9 @@ Various responses are provided for user input of an unreadable response (tuples 
 
 You can add your own options for user responses and error messages.
 
-#Simple localization
+# Simple localization
 
-##Switching between built-in languages
+## Switching between built-in languages
 
 At the moment, the program provides two languages of communication with the user - English and Russian. 
 
@@ -199,7 +199,7 @@ To switch the language, it is enough to change the only switch in the code - the
 
 Without exception, the code takes all messages to the user from the dictionaries.py file. Localization requires changes only in this file.
 
-##Simple localization into a new language:
+## Simple localization into a new language:
 
 The code provides easy localization to any new language. To do this, you need in the dictionaries.py file:
 
@@ -255,15 +255,15 @@ choosen\_language = "Any new language"
 
 The code generates the main message dictionary for the user (LOCALIZE_DICT) based on the keys of the ENGLISH_LOCALIZE_DICT dictionary. Therefore, when localizing, rely on this dictionary, and also carefully make sure that you have given the appropriate localization to all keys of the ENGLISH_LOCALIZE_DICT dictionary.
 
-#Simple game extension
+# Simple game extension
 
-##Easily manage fighter sets
+## Easily manage fighter sets
 
 When forming a list of fighters, the user is offered a choice between sets from the DICT_VARIANT[choosen_language]["GENERAL_NAME_LIST"] tuple in the dictionaries.py file.
 
 You can remove any of the name sets or add your own. The program will automatically prompt the user to choose between the sets that you leave.
 
-##Add your fighters to existing sets or create your own set.
+## Add your fighters to existing sets or create your own set.
 
 Lists of fighters of the tournament (if the user does not specify all the names himself) are formed randomly from sets selected by the user.
 
@@ -297,7 +297,7 @@ You can also create your own named tuple with character sets.
 Be sure to include this named tuple in the DICT_VARIANT[choosen_language]["GENERAL_NAME_LIST"] dictionaries set for this locale. Then when choosing character sets, the user will be prompted to select your new set. The program automatically offers the user a choice of sets from this tuple.
 
 
-##Change the leaderboard
+## Change the leaderboard
 
 The starting highscore table is stored in the DICT_VARIANT[choosen_language][" HIGH_SCORES"] constant in the dictionaries.py file.
 
@@ -306,7 +306,7 @@ You can change the names in this table, or the value of the records, or the numb
 **IMPORTANT**: When printing, only the names with the highest scores are printed. The number of seats displayed to the user is determined by the LEADERBOARD_LENGTH constant in the constants.py file. If you change the number of names in the table, or the number of seats displayed to the user, make sure that LEADERBOARD_LENGTH is less than or equal to the number of seats in the original highscore table (HIGH_SCORES).
 
 
-##Change the combat model of the game
+## Change the combat model of the game
 
 You can make your own improvements to the battle process - change the models of impact force, damaging factors of weapons, damage to characters' armor. To do this, you just need to expand the existing individual functions in the fight.py file:
 
@@ -317,7 +317,7 @@ damage_model
 armor_crush_model
 
 
-#Project files:
+# Project files:
 
 **core.py** - main file. Contains the starting code for the game.
 
@@ -343,7 +343,7 @@ armor_crush_model
 
 **IMPORTANT**: at the moment, tests displaying information to the user are configured for the Russian version of localization.
 
-#Requirements
+# Requirements
 
 Python 3.9+
 
